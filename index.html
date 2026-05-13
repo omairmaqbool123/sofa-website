@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Online Sofa House</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav>
+    <a href="#" class="logo">Online Sofa <span>House</span></a>
+    <ul class="nav-links">
+      <li><a href="#hero" class="active">Home</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-cta" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">Order Now</button>
+    <div class="nav-cart">Cart <span id="cartCountBadge">0</span></div>
+  </nav>
+
+  <section id="hero" class="hero">
+    <div class="hero-video-wrap">
+      <video autoplay muted loop playsinline src="5546819-hd_1920_1080_25fps.mp4"></video>
+    </div>
+    <div class="hero-inner">
+      <span class="eyebrow">Welcome to our Online Sofa House</span>
+      <h1>Welcome to our online sofa house</h1>
+      <p>All products open their own correct pictures. Click any sofa to see only the matching sofa images.</p>
+      <div class="hero-actions">
+        <button class="btn btn-solid" onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})">Explore Product</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="products" class="section">
+    <div class="section-title">
+      <h2>Our Best Sofas</h2>
+      <p>Click a sofa to open its gallery and explore matching room categories and similar styles.</p>
+    </div>
+
+    <div class="products-grid" id="productsGrid"></div>
+  </section>
+
+  <footer id="contact">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h3>Online Sofa <span>House</span></h3>
+        <p>Premium handcrafted sofas for every room in your home. Explore modern living, luxury drawing rooms, and playful kids pieces.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:03000000000">📞 0300-0000000</a></li>
+          <li><a href="mailto:info@sofa.pk">📧 info@sofa.pk</a></li>
+          <li><a href="https://wa.me/923000000000" target="_blank">💬 WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">© 2026 Online Sofa House. All rights reserved.</div>
+  </footer>
+
+  <div class="modal-overlay" id="productModal" onclick="closeModalOnBg(event)">
+    <div class="modal-card" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div class="modal-left">
+        <button class="modal-arrow prev" onclick="prevImg(event)">&#8592;</button>
+        <img class="modal-main-image" id="modalMainImage" src="" alt="Product image" />
+        <button class="modal-arrow next" onclick="nextImg(event)">&#8594;</button>
+        <div class="modal-thumb-row" id="modalThumbRow"></div>
+      </div>
+      <div class="modal-right">
+        <span class="modal-tag" id="modalTag"></span>
+        <p class="modal-category" id="modalCat"></p>
+        <h2 class="modal-name" id="modalName"></h2>
+        <p class="modal-price" id="modalPrice"></p>
+        <p class="modal-size" id="modalSize"></p>
+        <ul class="modal-features" id="modalFeatures"></ul>
+        <div class="modal-actions">
+          <button class="btn btn-solid" onclick="shopNow()">Shop Now</button>
+          <button class="btn btn-secondary" onclick="addToCart()">Add to Cart</button>
+          <button class="btn btn-secondary" onclick="closeModal()">Continue Shopping</button>
+        </div>
+        <div class="modal-related">
+          <h3>Similar Sofas</h3>
+          <div class="modal-related-list" id="relatedList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const products = [
+      {
+        id: 1,
+        name: 'Sofa 1 Gallery',
+        category: 'living',
+        catLabel: 'Living Room • Sofa 1',
+        tag: 'Sofa 1',
+        price: 'Rs 45,000',
+        size: '3 seats • 14×12 ft room',
+        features: ['Premium finish', 'Strong frame', 'Soft seating', 'Modern curves'],
+        images: [
+          'sofa1.webp',
+          'sofa1..webp',
+          'sofa1...webp'
+        ]
+      },
+      {
+        id: 2,
+        name: 'Sofa 2 Gallery',
+        category: 'drawing',
+        catLabel: 'Drawing Room • Sofa 2',
+        tag: 'Sofa 2',
+        price: 'Rs 62,000',
+        size: '4 seats • 16×14 ft room',
+        features: ['Luxury upholstery', 'Wide seating', 'Classic style', 'Rich look'],
+        images: [
+          'sofa2.webp',
+          'sofa2...webp'
+        ]
+      },
+      {
+        id: 3,
+        name: 'Sofa 3 Gallery',
+        category: 'kids',
+        catLabel: 'Kids Room • Sofa 3',
+        tag: 'Sofa 3',
+        price: 'Rs 12,500',
+        size: '2 seats • 8×8 ft room',
+        features: ['Soft form', 'Safe edges', 'Easy clean', 'Bright colors'],
+        images: [
+          'sofa3.webp',
+          'sofa3..webp',
+          'sofa3....webp'
+        ]
+      },
+      {
+        id: 4,
+        name: 'Sofa 4 Gallery',
+        category: 'living',
+        catLabel: 'Living Room • Sofa 4',
+        tag: 'Sofa 4',
+        price: 'Rs 38,500',
+        size: 'Corner style • 12×10 ft room',
+        features: ['Comfort chaise', 'Neutral tone', 'Modern shape', 'Room friendly'],
+        images: [
+          'sofa4.webp',
+          'sofa4..webp'
+        ]
+      },
+      {
+        id: 5,
+        name: 'Sofa 6 Gallery',
+        category: 'living',
+        catLabel: 'Living Room • Sofa 6',
+        tag: 'Sofa 6',
+        price: 'Rs 48,000',
+        size: '3 seats • 14×13 ft room',
+        features: ['Leather wrap', 'Solid base', 'Roomy cushions', 'Modern armrests'],
+        images: [
+          'sofa6.webp',
+          'sofa6..webp',
+          'sofa6....jpg'
+        ]
+      },
+      {
+        id: 6,
+        name: 'Sofa 7 Gallery',
+        category: 'drawing',
+        catLabel: 'Drawing Room • Sofa 7',
+        tag: 'Sofa 7',
+        price: 'Rs 55,000',
+        size: '4 seats • 16×14 ft room',
+        features: ['Lux fabric', 'Deep seating', 'Detailed stitching', 'Bold shape'],
+        images: [
+          'sofa7.webp',
+          'sofa7..webp',
+          'sofa7...webp',
+          'sofa7....webp'
+        ]
+      },
+      {
+        id: 7,
+        name: 'Sofa 8 Gallery',
+        category: 'living',
+        catLabel: 'Living Room • Sofa 8',
+        tag: 'Sofa 8',
+        price: 'Rs 40,000',
+        size: '3 seats • 13×12 ft room',
+        features: ['Soft frame', 'Neutral tone', 'Elegant legs', 'Plush comfort'],
+        images: [
+          'sofa8.webp',
+          'sofa8..webp',
+          'sofa8...webp'
+        ]
+      },
+      {
+        id: 8,
+        name: 'Sofa 9 Gallery',
+        category: 'kids',
+        catLabel: 'Kids Room • Sofa 9',
+        tag: 'Sofa 9',
+        price: 'Rs 18,500',
+        size: '2 seats • 9×8 ft room',
+        features: ['Bright style', 'Kid-safe design', 'Easy clean', 'Soft curve'],
+        images: [
+          'sofa9.webp',
+          'sofa9..webp',
+          'sofa9...webp',
+          'sofa9....webp'
+        ]
+      },
+      {
+        id: 9,
+        name: 'Sofa 10 Gallery',
+        category: 'drawing',
+        catLabel: 'Drawing Room • Sofa 10',
+        tag: 'Sofa 10',
+        price: 'Rs 65,000',
+        size: '4 seats • 17×15 ft room',
+        features: ['Premium leather', 'Classic tufting', 'Solid frame', 'Statement piece'],
+        images: [
+          'sofa10.webp',
+          'sofa10..webp',
+          'sofa10...webp',
+          'sofa10....webp',
+          'sofa10.....webp'
+        ]
+      }
+    ];
+
+    const productsGrid = document.getElementById('productsGrid');
+    const modal = document.getElementById('productModal');
+    const modalMainImage = document.getElementById('modalMainImage');
+    const modalThumbRow = document.getElementById('modalThumbRow');
+    const relatedList = document.getElementById('relatedList');
+    const cartCountBadge = document.getElementById('cartCountBadge');
+    let activeProduct = null;
+    let activeImageIndex = 0;
+    let cartItems = [];
+
+    function updateCartBadge() {
+      if (!cartCountBadge) return;
+      cartCountBadge.textContent = cartItems.length;
+    }
+
+    function addToCart() {
+      if (!activeProduct) return;
+      cartItems.push(activeProduct.id);
+      updateCartBadge();
+      alert(`${activeProduct.name} has been added to cart.`);
+    }
+
+    function shopNow() {
+      if (!activeProduct) return;
+      const message = encodeURIComponent(`Hello, I want to shop for ${activeProduct.name} priced at ${activeProduct.price}.`);
+      window.open(`https://wa.me/923000000000?text=${message}`, '_blank');
+    }
+
+    function buildProductGrid(items) {
+      productsGrid.innerHTML = items.map(product => `
+        <article class="product-card" onclick="openProduct(${product.id})">
+          <div class="product-image">
+            <img src="${product.images[0]}" alt="${product.name}" />
+          </div>
+          <div class="product-body">
+            <div class="product-meta">${product.category} · ${product.tag}</div>
+            <h3 class="product-name">${product.name}</h3>
+            <p class="product-desc">${product.size}</p>
+            <div class="product-footer">
+              <span class="product-price">${product.price}</span>
+              <button class="product-button" onclick="event.stopPropagation(); openProduct(${product.id})">Open Gallery</button>
+            </div>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function openProduct(id) {
+      const product = products.find(item => item.id === id);
+      if (!product) return;
+      activeProduct = product;
+      activeImageIndex = 0;
+
+      document.getElementById('modalTag').textContent = product.tag;
+      document.getElementById('modalCat').textContent = product.catLabel;
+      document.getElementById('modalName').textContent = product.name;
+      document.getElementById('modalPrice').textContent = product.price;
+      document.getElementById('modalSize').textContent = product.size;
+      document.getElementById('modalFeatures').innerHTML = product.features.map(feature => `<li>${feature}</li>`).join('');
+
+      renderModalImages();
+      renderRelatedProducts();
+      setModalImage(0);
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function renderModalImages() {
+      modalThumbRow.innerHTML = activeProduct.images.map((src, index) => `
+        <img src="${src}" class="modal-thumb${index === activeImageIndex ? ' active' : ''}" alt="Thumbnail ${index + 1}" onclick="setModalImage(${index})" />
+      `).join('');
+    }
+
+    function setModalImage(index) {
+      activeImageIndex = index;
+      modalMainImage.src = activeProduct.images[index];
+      renderModalImages();
+    }
+
+    function prevImg(event) {
+      if (event) event.stopPropagation();
+      const nextIndex = (activeImageIndex - 1 + activeProduct.images.length) % activeProduct.images.length;
+      setModalImage(nextIndex);
+    }
+
+    function nextImg(event) {
+      if (event) event.stopPropagation();
+      const nextIndex = (activeImageIndex + 1) % activeProduct.images.length;
+      setModalImage(nextIndex);
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    function closeModalOnBg(event) {
+      if (event.target === modal) closeModal();
+    }
+
+    function renderRelatedProducts() {
+      const related = products.filter(item => item.category === activeProduct.category && item.id !== activeProduct.id).slice(0, 3);
+      if (related.length === 0) {
+        relatedList.innerHTML = '<p>No similar sofas found in this category yet.</p>';
+        return;
+      }
+      relatedList.innerHTML = related.map(item => `
+        <div class="related-item" onclick="openProduct(${item.id})">
+          <img src="${item.images[0]}" alt="${item.name}" />
+          <span>${item.name}</span>
+        </div>
+      `).join('');
+    }
+
+    function orderOnWhatsApp() {
+      if (!activeProduct) return;
+      const message = encodeURIComponent(`Hello, I want to order the ${activeProduct.name} priced at ${activeProduct.price}.`);
+      window.open(`https://wa.me/923000000000?text=${message}`, '_blank');
+    }
+
+    function filterProducts(category) {
+      const filtered = category === 'all' ? products : products.filter(item => item.category === category);
+      buildProductGrid(filtered);
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    document.addEventListener('keydown', event => {
+      if (!modal.classList.contains('open')) return;
+      if (event.key === 'Escape') closeModal();
+      if (event.key === 'ArrowLeft') prevImg();
+      if (event.key === 'ArrowRight') nextImg();
+    });
+
+    buildProductGrid(products);
+  </script>
+</body>
+</html>
